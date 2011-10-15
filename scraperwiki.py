@@ -9,6 +9,24 @@ URLS={
   "base":"http://www.rifidec.org/membres/"
 }
 
+def main():
+  regions,orgs=urls.urls()
+  save(regions,'regions.csv')
+  save(orgs,'orgs.csv')
+  for org in orgs:
+    xml=urls.get(urls.URLS['base']+org['href'])
+    org.update(dig(xml))
+
+def dig(xml):
+  """Dig for data"""
+  d={}
+  values=xml.xpath('//p/span')
+  for v in values:
+    key=v.getparent().text
+    value=v.text
+    d[key]=value
+  return d
+
 def urls():
   regions=[]
   orgs=[]
@@ -53,7 +71,3 @@ def get_links(xml,xpath='//a',textkey="text",extra={}):
       row["href"]=a.attrib['href']
       links.append(row)
   return links
-
-if __name__ == '__main__':
-  regions,orgs=urls()
-  print regions

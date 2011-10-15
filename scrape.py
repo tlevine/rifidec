@@ -4,10 +4,16 @@ import urls
 
 def main():
   regions,orgs=urls.urls()
+  save(regions,'regions.csv')
+  save(orgs,'orgs.csv')
   for org in orgs:
     xml=urls.get(urls.URLS['base']+org['href'])
     org.update(dig(xml))
   print len(orgs)
+
+def save(foo,name):
+  """Dummy function for now"""
+  print(foo)
 
 def dig(xml):
   """Dig for data"""
