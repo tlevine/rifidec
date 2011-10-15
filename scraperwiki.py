@@ -9,7 +9,7 @@ URLS={
   "base":"http://www.rifidec.org/membres/"
 }
 
-def save_table_scraperwiki(uniques,table,name)
+def save_table_scraperwiki(uniques,table,name):
   """Saving a whole table. Change this for a different output"""
   for row in table:
     scraperwiki.sqlite.save(
