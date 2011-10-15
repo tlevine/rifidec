@@ -4,18 +4,32 @@ from urllib2 import urlopen
 from lxml.html import fromstring
 from demjson import decode
 
-def main():
-  raw=urlopen('http://www.rifidec.org/membres/kinshasa.htm').read()
-  xml=fromstring(raw)
-  links=get_links(xml)
-  return links
+URLS={
+  "base":"http://www.rifidec.org/membres/"
+}
 
-def get_links(xml):
+def main():
+  regions={}
+  for url in region_urls():
+    xml=get(URLS['base']+url['href'])
+    links=get_links(xml,'//table/tr/td/a',textkey="organization")
+    regions[url['region']]=links
+  print regions
+
+def get(url):
+  raw=urlopen(url).read()
+  return fromstring(raw)
+
+def region_urls():
+  xml=get('http://www.rifidec.org/membres/infomembres.htm')
+  return get_links(xml,'//a',textkey="region")[:-1]
+
+def get_links(xml,xpath,textkey="text"):
   links=[]
-  for a in xml.xpath('//table/tr/td/a'):
+  for a in xml.xpath(xpath):
     if a.text!=None:
       links.append({
-        "organization":a.text
+        textkey:a.text
       , "href":a.attrib['href']
       })
   return links
