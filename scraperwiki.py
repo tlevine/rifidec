@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+import scraperwiki
 from copy import copy
 
 from urllib2 import urlopen
@@ -9,13 +9,24 @@ URLS={
   "base":"http://www.rifidec.org/membres/"
 }
 
+def save_table_scraperwiki(uniques,table,name)
+  """Saving a whole table. Change this for a different output"""
+  for row in table:
+    scraperwiki.sqlite.save(
+      unique_keys=uniques
+    , data=row
+    , table_name=name
+    )
+
+save_table=save_table_scraperwiki
+
 def main():
-  regions,orgs=urls.urls()
-  save(regions,'regions.csv')
-  save(orgs,'orgs.csv')
+  regions,orgs=urls()
+  save_table(['region_id'],regions,'regions')
   for org in orgs:
-    xml=urls.get(urls.URLS['base']+org['href'])
+    xml=get(URLS['base']+org['href'])
     org.update(dig(xml))
+  save_table([],orgs,'organizations')
 
 def dig(xml):
   """Dig for data"""
@@ -71,3 +82,5 @@ def get_links(xml,xpath='//a',textkey="text",extra={}):
       row["href"]=a.attrib['href']
       links.append(row)
   return links
+
+main()
