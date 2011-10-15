@@ -4,7 +4,6 @@ from copy import copy
 
 from urllib2 import urlopen
 from lxml.html import fromstring
-from demjson import decode
 
 URLS={
   "base":"http://www.rifidec.org/membres/"
@@ -34,8 +33,7 @@ def urls():
     ))
     #print orgs
 
-  print regions
-  print orgs
+  return [regions,orgs]
 
 def get(url):
   raw=urlopen(url).read()
@@ -56,4 +54,5 @@ def get_links(xml,xpath='//a',textkey="text",extra={}):
   return links
 
 if __name__ == '__main__':
-  urls()
+  regions,orgs=urls()
+  print regions
