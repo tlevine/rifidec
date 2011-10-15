@@ -10,23 +10,32 @@ URLS={
   "base":"http://www.rifidec.org/membres/"
 }
 
-def main():
+def urls():
   regions=[]
+  orgs=[]
   region_id=0
   for url in region_urls():
     region_id=region_id+1
     xml=get(URLS['base']+url['href'])
-    links=get_links(
-      xml
-    , '//table/tr/td/a'
-    , textkey="organization"
-    , extra={"region_id":region_id}
-    )
+
+    #Regions row
     regions.append({
       "region_id":region_id
     , "region":url['region']
     })
-    print regions
+    #print regions
+
+    #Organization rows
+    orgs.extend(get_links(
+      xml
+    , '//table/tr/td/a'
+    , textkey="organization"
+    , extra={"region_id":region_id}
+    ))
+    #print orgs
+
+  print regions
+  print orgs
 
 def get(url):
   raw=urlopen(url).read()
@@ -36,7 +45,7 @@ def region_urls():
   xml=get('http://www.rifidec.org/membres/infomembres.htm')
   return get_links(xml,'//a',textkey="region")[:-1]
 
-def get_links(xml,xpath,textkey="text",extra={}):
+def get_links(xml,xpath='//a',textkey="text",extra={}):
   links=[]
   for a in xml.xpath(xpath):
     if a.text!=None:
@@ -47,4 +56,4 @@ def get_links(xml,xpath,textkey="text",extra={}):
   return links
 
 if __name__ == '__main__':
-  main()
+  urls()
